@@ -2,7 +2,7 @@ package error
 
 import (
 	"fmt"
-	"tiny-submarine/event"
+	"vertex/event"
 )
 
 type ApiError struct {
@@ -19,5 +19,5 @@ func (e ApiError) AsEvent(appName string) event.Event {
 }
 
 func (e ApiError) AsInternalEvent() event.Event {
-	return e.AsEvent("tiny-submarine")
+	return e.AsEvent("submarine")
 }

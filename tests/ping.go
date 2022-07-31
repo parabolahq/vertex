@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 )
 
-func (s *SubmarineTestSuite) TestPing() {
+func (s *VertexTestSuite) TestPing() {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/ping", nil)
 	s.Gin.ServeHTTP(w, req)

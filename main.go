@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"tiny-submarine/config"
-	"tiny-submarine/routing"
+	"vertex/config"
+	"vertex/routing"
 )
 
 func main() {

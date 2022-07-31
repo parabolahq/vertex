@@ -1,4 +1,4 @@
-module tiny-submarine
+module vertex
 
 go 1.18
 

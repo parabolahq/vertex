@@ -4,17 +4,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/suite"
 	"gopkg.in/olahol/melody.v1"
-	"tiny-submarine/config"
-	"tiny-submarine/routing"
+	"vertex/config"
+	"vertex/routing"
 )
 
-type SubmarineTestSuite struct {
+type VertexTestSuite struct {
 	suite.Suite
 	Gin    *gin.Engine
 	Melody *melody.Melody
 }
 
-func (s *SubmarineTestSuite) SetupTest() {
+func (s *VertexTestSuite) SetupTest() {
 	s.Gin, s.Melody = routing.SetupRoutes()
 	config.LoadConfigs()
 }

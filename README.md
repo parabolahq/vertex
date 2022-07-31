@@ -1,11 +1,11 @@
-# Tiny Submarine
+# Vertex
 
 Message Queue pool for websocket messaging
 
 ## Getting Started
 
 ```bash
-git clone https://github.com/parabolahq/tiny-submarine
+git clone https://github.com/parabolahq/vertex
 ```
 ### Prerequisites
 
@@ -32,5 +32,5 @@ git clone https://github.com/parabolahq/tiny-submarine
 
 ### Branches
 
-* Master: _Main version of tiny-submarine_ 
+* Master: _Main version of Vertex_ 
 
