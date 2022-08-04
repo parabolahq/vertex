@@ -9,3 +9,7 @@ import (
 func TestVertexTestSuite(t *testing.T) {
 	suite.Run(t, new(tests.VertexTestSuite))
 }
+
+func TestVertexKeysSuite(t *testing.T) {
+	suite.Run(t, new(tests.VertexKeysTestSuite))
+}

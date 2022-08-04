@@ -16,6 +16,14 @@ type VertexTestSuite struct {
 	Dialer *websocket.Dialer
 }
 
+type VertexKeysTestSuite struct {
+	suite.Suite
+}
+
+func (s *VertexKeysTestSuite) SetupTest() {
+	config.LoadConfigs()
+}
+
 func (s *VertexTestSuite) SetupTest() {
 	s.Gin, s.Melody = routing.SetupRoutes()
 	config.LoadConfigs()
