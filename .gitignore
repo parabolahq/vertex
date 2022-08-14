@@ -118,6 +118,9 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/goland+all,go
 
-# JWT Keys
-private.pem
-public.pem
+# JWK Keys for tests, on production public key should be loaded from key storage
+public.jwk
+private.jwk
+
+# Config File
+config.yaml

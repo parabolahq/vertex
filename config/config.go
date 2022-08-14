@@ -19,9 +19,8 @@ func LoadConfigs() {
 	Config.Load(confmap.Provider(map[string]interface{}{
 		"bindaddr": "localhost:7000",
 		"config":   "config.yaml",
-		"keys": map[string]interface{}{
-			"public": "public.pem",
-			"remote": false,
+		"keys": []string{
+			"public.jwk",
 		},
 	}, "."), nil)
 

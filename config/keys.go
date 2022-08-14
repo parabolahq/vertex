@@ -2,20 +2,20 @@ package config
 
 import (
 	"errors"
-	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 var PublicKey = new(jwk.Key)
 var KeySet = jwk.NewSet()
 
-func LoadKey(path string, isRemote bool, alg jwa.SignatureAlgorithm) (*jwk.Key, error) {
+func LoadKey(path string) (*jwk.Key, error) {
 	var keyRaw []byte
-	if !isRemote {
+	if !strings.HasPrefix(path, "http") {
 		var readErr error
 		keyRaw, readErr = os.ReadFile(path)
 		if readErr != nil {
@@ -31,8 +31,7 @@ func LoadKey(path string, isRemote bool, alg jwa.SignatureAlgorithm) (*jwk.Key, 
 		keyRaw, _ = io.ReadAll(req.Body)
 	}
 
-	key, parseErr := jwk.ParseKey(keyRaw, jwk.WithPEM(true))
-	key.Set(jwk.AlgorithmKey, alg)
+	key, parseErr := jwk.ParseKey(keyRaw)
 	if parseErr != nil {
 		return nil, parseErr
 	}
@@ -41,9 +40,11 @@ func LoadKey(path string, isRemote bool, alg jwa.SignatureAlgorithm) (*jwk.Key, 
 
 func LoadKeys() {
 	var err error
-	PublicKey, err = LoadKey(Config.String("keys.public"), Config.Bool("keys.remote"), jwa.RS256)
-	if err != nil {
-		log.Fatal(err)
+	for _, s := range Config.Strings("keys") {
+		PublicKey, err = LoadKey(s)
+		if err != nil {
+			log.Fatal(err)
+		}
+		KeySet.Add(*PublicKey)
 	}
-	KeySet.Add(*PublicKey)
 }
