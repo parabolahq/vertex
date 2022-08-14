@@ -44,12 +44,9 @@ func AuthorizeRequest(req *http.Request) (data map[string]interface{}, err error
 		return nil, errors.New("token unspecified")
 	}
 	tokenRaw := strings.TrimSpace(strings.TrimPrefix(authorizationHeader, "Bearer"))
-	// Using default key here, because KeySet contains only one public key
-	// https://github.com/lestrrat-go/jwx/issues/458
 	token, err := jwt.Parse(
 		[]byte(tokenRaw),
 		jwt.WithKeySet(config.KeySet),
-		jwt.UseDefaultKey(true),
 		jwt.WithValidate(true),
 	)
 	if err != nil {
