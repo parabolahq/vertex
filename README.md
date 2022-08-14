@@ -7,10 +7,10 @@ Message Queue pool for websocket messaging
 ```bash
 git clone https://github.com/parabolahq/vertex
 ```
+
 ### Prerequisites
 
 * [Go 1.18+](https://go.dev/dl/)
-
 
 ## Usage
 
@@ -28,6 +28,15 @@ git clone https://github.com/parabolahq/vertex
    ./main
    ```
 
+## Communication with service
+
+### Errors
+
+| Int Error Code | Description                    | Fix recommendations                                                              |
+|:--------------:|--------------------------------|----------------------------------------------------------------------------------|
+|      `0`       | Internal error occurred        | _Contact Backend Dev_                                                            |
+|      `1`       | Token invalid or not presented | _Check if token is sent in `Authorization` header and obtained with correct way_ |
+|      `2`       | Parse of json failed           | _Check if websocket request is encoded to JSON correctly and_                    |
 ## Deployment
 
 ### Branches

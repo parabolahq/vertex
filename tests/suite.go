@@ -27,5 +27,6 @@ func (s *VertexKeysTestSuite) SetupTest() {
 func (s *VertexTestSuite) SetupTest() {
 	s.Gin, s.Melody = routing.SetupRoutes()
 	config.LoadConfigs()
+	config.LoadKeys()
 	s.Dialer = websocket.DefaultDialer
 }

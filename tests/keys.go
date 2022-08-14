@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
 	"os"
 	"vertex/config"
@@ -17,7 +18,7 @@ func (s *VertexKeysTestSuite) TestLocalKeyLoad() {
 			keyPath = config.Config.String("keys.public")
 		}
 		var key *jwk.Key
-		key, err := config.LoadKey(keyPath, false)
+		key, err := config.LoadKey(keyPath, false, jwa.RS256)
 		s.Assert().Nil(err)
 		s.Assert().NotEmpty(key)
 
@@ -35,7 +36,7 @@ func (s *VertexKeysTestSuite) TestKeyLoadRemote() {
 			keyPath = config.Config.String("keys.public")
 		}
 		var key *jwk.Key
-		key, err := config.LoadKey(keyPath, true)
+		key, err := config.LoadKey(keyPath, true, jwa.RS256)
 		s.Assert().Nil(err)
 		s.Assert().NotEmpty(key)
 	}
@@ -43,7 +44,7 @@ func (s *VertexKeysTestSuite) TestKeyLoadRemote() {
 
 func (s *VertexKeysTestSuite) TestKeyLoadRemoteIncorrect() {
 	keyPath := "https://someurlthatdoesnt.exists/public.pem"
-	key, err := config.LoadKey(keyPath, true)
+	key, err := config.LoadKey(keyPath, true, jwa.RS256)
 	s.Assert().Nil(key)
 	s.Assert().Error(err)
 }
