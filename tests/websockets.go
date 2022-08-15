@@ -5,18 +5,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"log"
+	"net/http"
 	"net/http/httptest"
 	"strings"
 	"vertex/communication"
 )
 
 func (s *VertexTestSuite) TestWebsocketDisconnection() {
-	s.T().Skip("Temporary skip because of the implementation of authentication")
 	testServer := httptest.NewServer(s.Gin)
 	defer testServer.Close()
 	conn, _, err := s.Dialer.Dial(
 		fmt.Sprintf("%s/ws", strings.Replace(testServer.URL, "http", "ws", 1)),
-		nil,
+		http.Header{
+			"Authorization": {"Bearer " + s.SignedToken},
+		},
 	)
 	if err != nil {
 		log.Fatal(err)
