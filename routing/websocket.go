@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/lestrrat-go/jwx/jwt"
 	"gopkg.in/olahol/melody.v1"
 	"log"
@@ -83,14 +82,23 @@ func HandleMessage(s *melody.Session, data []byte) {
 						}
 					}
 				}
+			case "userInfo":
+				{
+					asJson, _ := json.Marshal(communication.Event{
+						ServiceAlias: "vertex",
+						EventType:    "infoUpdate",
+						Data:         &map[string]interface{}{"userId": s.Keys["user_id"]},
+					})
+					s.Write(asJson)
+				}
 			}
 		}
 	}
 }
 
 func HandleConnection(s *melody.Session) {
-	sessionId, _ := uuid.NewUUID()
+	data, _ := AuthorizeRequest(s.Request)
 	s.Keys = map[string]interface{}{}
-	s.Keys["session_id"] = sessionId.String()
-	log.Printf("Connected user. Added new session %s", sessionId.String())
+	s.Keys["user_id"] = data["uid"]
+	log.Printf("Connected user. Added new session %s", data["uid"])
 }
