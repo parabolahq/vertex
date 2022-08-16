@@ -78,7 +78,7 @@ func HandleMessage(s *melody.Session, data []byte) {
 						log.Print(closeErr)
 					} else {
 						if s.IsClosed() {
-							log.Printf("Session %s succesfuly closed", s.Keys["session_id"])
+							log.Printf("Session %s succesfuly closed", s.Keys["user_id"])
 						}
 					}
 				}
