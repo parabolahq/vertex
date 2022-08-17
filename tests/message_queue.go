@@ -68,12 +68,14 @@ func (s *VertexTestSuite) TestWebsocketAMQPCommunication() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	for message := range messages {
 		body, _ := req.ToServiceRequest("0000-0000-0000-0001")
 		bodyMarshaled, _ := json.Marshal(body)
 		assert.JSONEq(s.T(), string(message.Body), string(bodyMarshaled))
+		_, err := channel.QueueDelete(queue.Name, false, false, false)
+		if err != nil {
+			s.T().Fail()
+		}
 		channel.Close()
 	}
-
 }
