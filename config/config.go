@@ -18,7 +18,10 @@ func LoadConfigs() {
 	// Loading default values in configuration
 	Config.Load(confmap.Provider(map[string]interface{}{
 		"bindaddr": "localhost:7000",
-		"config":   "config.yaml",
+		"amqp": map[string]interface{}{
+			"url": "amqp://guest:guest@localhost:5672/",
+		},
+		"config": "config.yaml",
 		"keys": []string{
 			"public.jwk",
 		},
@@ -37,5 +40,5 @@ func LoadConfigs() {
 			log.Fatalf("error loading config: %v", err)
 		}
 	}
-
+	log.Println("Config loaded")
 }

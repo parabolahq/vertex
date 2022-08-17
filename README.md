@@ -11,6 +11,7 @@ git clone https://github.com/parabolahq/vertex
 ### Prerequisites
 
 * [Go 1.18+](https://go.dev/dl/)
+* [RabbitMQ](https://www.rabbitmq.com/)
 
 ## Usage
 

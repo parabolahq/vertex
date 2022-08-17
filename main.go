@@ -1,17 +1,19 @@
 package main
 
 import (
-	"log"
+	"vertex/communication"
 	"vertex/config"
 	"vertex/routing"
+	"vertex/utils"
 )
 
 func main() {
 	config.LoadConfigs()
 	config.LoadKeys()
+	communication.ConnectToQueue()
+	// Closing RabbitMQ session on exit
+	defer communication.CloseEverything()
 	g, _ := routing.SetupRoutes()
 	err := g.Run(config.Config.String("bindaddr"))
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.FailOnError(err, "Failed to start gin server")
 }
