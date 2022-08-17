@@ -83,6 +83,18 @@ func HandleMessage(s *melody.Session, data []byte) {
 					s.Write(asJson)
 				}
 			}
+		} else {
+			serviceRequest, err := userRequest.ToServiceRequest(s.Keys["user_id"].(string))
+			if err != nil {
+				errMsg := apiErr.BadRequest().AsInternalEvent()
+				s.Write(errMsg.AsBytes())
+			} else {
+				err := communication.SendMessageToService(serviceRequest)
+				if err != nil {
+					errMsg := apiErr.SendingMQError().AsInternalEvent()
+					s.Write(errMsg.AsBytes())
+				}
+			}
 		}
 	}
 }

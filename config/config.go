@@ -25,6 +25,7 @@ func LoadConfigs() {
 		"keys": []string{
 			"public.jwk",
 		},
+		"id": "vertex-default",
 	}, "."), nil)
 
 	// Loading values from Env variables
