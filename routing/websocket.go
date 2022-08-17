@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/lestrrat-go/jwx/jwt"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"gopkg.in/olahol/melody.v1"
 	"log"
 	"net/http"
@@ -32,7 +33,6 @@ func setupWebSocketRoute(g *gin.Engine, m *melody.Melody) *gin.Engine {
 
 func AuthorizeRequest(req *http.Request) (data map[string]interface{}, err error) {
 	authorizationHeader := strings.TrimSpace(req.Header.Get("Authorization"))
-	log.Println(authorizationHeader)
 	if authorizationHeader == "" || !strings.HasPrefix(authorizationHeader, "Bearer") {
 		return nil, errors.New("token unspecified")
 	}
@@ -108,6 +108,7 @@ func HandleConnection(s *melody.Session) {
 		// If message is not delivered to handler, and error occurs, then just ignore it
 		_ = communication.SendMessageToService(communication.PoolActionServiceRequest(handlerName, UserId, "connect"))
 	}
+	communication.StoreSession(UserId, s)
 	log.Printf("Connected user. Added new session for user %s", data["uid"])
 }
 
@@ -117,5 +118,29 @@ func HandleDisconnection(s *melody.Session) {
 		// If message is not delivered to handler, and error occurs, then just ignore it
 		_ = communication.SendMessageToService(communication.PoolActionServiceRequest(handlerName, UserId, "disconnect"))
 	}
+	communication.RemoveSession(UserId, s)
 	log.Printf("Disconnected user. Removed session for user %s", s.Keys["user_id"])
+}
+
+func HandleAmqpMessage(m *melody.Melody, d amqp.Delivery) {
+	receivedEvent := new(communication.Event)
+	err := json.Unmarshal(d.Body, &receivedEvent)
+	if err != nil {
+		log.Println("Failed to decode message:", err)
+	} else {
+		recipients := receivedEvent.RecipientIds
+		receivedEvent.RecipientIds = nil
+		broadcastSessions := []*melody.Session{}
+		for _, recipient := range recipients {
+			sessions := communication.GetSessions(recipient)
+			broadcastSessions = append(broadcastSessions, sessions...)
+		}
+		if len(broadcastSessions) > 0 {
+			eventSerialized := receivedEvent.AsBytes()
+			err := m.BroadcastMultiple(eventSerialized, broadcastSessions)
+			if err != nil {
+				log.Println("Failed to broadcast message:", err)
+			}
+		}
+	}
 }

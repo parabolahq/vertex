@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"gopkg.in/olahol/melody.v1"
 	"log"
 	"vertex/config"
 	"vertex/utils"
@@ -11,6 +12,8 @@ import (
 
 var Connection *amqp.Connection
 var Channel *amqp.Channel
+
+type OnMessageCallback func(*melody.Melody, amqp.Delivery)
 
 func ConnectToQueue() {
 	Connection, err := amqp.Dial(config.Config.String("amqp.url"))
@@ -55,4 +58,33 @@ func CloseEverything() {
 	utils.FailOnError(err, "Failed to close channel")
 	err = Connection.Close()
 	utils.FailOnError(err, "Failed to close connection")
+}
+
+func ListenForEvents(m *melody.Melody, callback OnMessageCallback) {
+	var forever chan struct{}
+	log.Println("Listening for events")
+	queue, err := Channel.QueueDeclare(
+		config.Config.String("amqp.queue"),
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	utils.FailOnError(err, "Failed to declare a queue")
+	messages, err := Channel.Consume(
+		queue.Name,
+		"",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	utils.FailOnError(err, "Failed to register a consumer")
+	for d := range messages {
+		log.Println(string(d.Body))
+		callback(m, d)
+	}
+	<-forever
 }

@@ -17,6 +17,7 @@ type ServiceRequest struct {
 	UserRequest UserRequest `json:"userRequest"`
 	UserId      string      `json:"userId"`
 	PoolId      string      `json:"poolId"`
+	FromPool    bool        `json:"fromPool"`
 }
 
 func (r *UserRequest) ToServiceRequest(userId string) (ServiceRequest, error) {
@@ -38,7 +39,8 @@ func PoolActionServiceRequest(serviceAlias, userId, actionName string) ServiceRe
 			MethodName:   actionName,
 			Params:       map[string]interface{}{},
 		},
-		UserId: userId,
-		PoolId: config.Config.String("id"),
+		UserId:   userId,
+		PoolId:   config.Config.String("id"),
+		FromPool: true,
 	}
 }

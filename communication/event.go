@@ -1,11 +1,14 @@
 package communication
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 // Event is data, that is sent to user by pool
 type Event struct {
 	ServiceAlias string                  `json:"serviceAlias"`
 	EventType    string                  `json:"eventType"`
+	RecipientIds []string                `json:"recipientIds,omitempty"`
 	Data         *map[string]interface{} `json:"data"`
 }
 

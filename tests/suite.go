@@ -52,10 +52,10 @@ func CreateEmptyToken() (string, error) {
 }
 
 func (s *VertexTestSuite) SetupTest() {
-	s.Gin, s.Melody = routing.SetupRoutes()
 	config.LoadConfigs()
 	config.LoadKeys()
 	communication.ConnectToQueue()
+	s.Gin, s.Melody = routing.SetupRoutes()
 	emptyToken, err := CreateEmptyToken()
 	if err != nil {
 		s.T().Fatal(err)
