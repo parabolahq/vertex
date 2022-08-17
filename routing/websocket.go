@@ -102,6 +102,20 @@ func HandleMessage(s *melody.Session, data []byte) {
 func HandleConnection(s *melody.Session) {
 	data, _ := AuthorizeRequest(s.Request)
 	s.Keys = map[string]interface{}{}
-	s.Keys["user_id"] = data["uid"]
-	log.Printf("Connected user. Added new session %s", data["uid"])
+	UserId := data["uid"].(string)
+	s.Keys["user_id"] = UserId
+	for _, handlerName := range config.Config.Strings("handlers.connect") {
+		// If message is not delivered to handler, and error occurs, then just ignore it
+		_ = communication.SendMessageToService(communication.PoolActionServiceRequest(handlerName, UserId, "connect"))
+	}
+	log.Printf("Connected user. Added new session for user %s", data["uid"])
+}
+
+func HandleDisconnection(s *melody.Session) {
+	UserId := s.Keys["user_id"].(string)
+	for _, handlerName := range config.Config.Strings("handlers.disconnect") {
+		// If message is not delivered to handler, and error occurs, then just ignore it
+		_ = communication.SendMessageToService(communication.PoolActionServiceRequest(handlerName, UserId, "disconnect"))
+	}
+	log.Printf("Disconnected user. Removed session for user %s", s.Keys["user_id"])
 }

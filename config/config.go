@@ -26,6 +26,10 @@ func LoadConfigs() {
 			"public.jwk",
 		},
 		"id": "vertex-default",
+		"handlers": map[string]interface{}{
+			"connect":    []string{},
+			"disconnect": []string{},
+		},
 	}, "."), nil)
 
 	// Loading values from Env variables

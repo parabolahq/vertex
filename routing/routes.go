@@ -16,5 +16,6 @@ func SetupRoutes() (g *gin.Engine, m *melody.Melody) {
 func setupMelodyEvents(m *melody.Melody) *melody.Melody {
 	m.HandleMessage(HandleMessage)
 	m.HandleConnect(HandleConnection)
+	m.HandleDisconnect(HandleDisconnection)
 	return m
 }

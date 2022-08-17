@@ -30,3 +30,15 @@ func (r *UserRequest) ToServiceRequest(userId string) (ServiceRequest, error) {
 		PoolId:      config.Config.String("id"),
 	}, nil
 }
+
+func PoolActionServiceRequest(serviceAlias, userId, actionName string) ServiceRequest {
+	return ServiceRequest{
+		UserRequest: UserRequest{
+			ServiceAlias: serviceAlias,
+			MethodName:   actionName,
+			Params:       map[string]interface{}{},
+		},
+		UserId: userId,
+		PoolId: config.Config.String("id"),
+	}
+}
