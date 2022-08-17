@@ -19,17 +19,11 @@ func setupWebSocketRoute(g *gin.Engine, m *melody.Melody) *gin.Engine {
 	g.GET("/ws", func(c *gin.Context) {
 		_, err := AuthorizeRequest(c.Request)
 		if err != nil {
-			c.JSON(403, apiErr.ApiError{
-				ErrorCode: 1,
-				Data:      "Authentication error",
-			}.AsInternalEvent())
+			c.JSON(403, apiErr.InvalidToken().AsInternalEvent())
 		} else {
 			err = m.HandleRequest(c.Writer, c.Request)
 			if err != nil {
-				c.JSON(500, apiErr.ApiError{
-					ErrorCode: 0,
-					Data:      "Internal error occurred",
-				}.AsInternalEvent())
+				c.JSON(500, apiErr.InternalError().AsInternalEvent())
 			}
 		}
 	})
@@ -63,10 +57,7 @@ func HandleMessage(s *melody.Session, data []byte) {
 	userRequest := communication.UserRequest{}
 	jsonErr := json.Unmarshal(data, &userRequest)
 	if jsonErr != nil {
-		validationErr := apiErr.ApiError{
-			ErrorCode: 2,
-			Data:      "Parse of JSON failed",
-		}.AsInternalEvent()
+		validationErr := apiErr.BadRequest().AsInternalEvent()
 		s.Write(validationErr.AsBytes())
 	} else {
 		if userRequest.ServiceAlias == "vertex" {

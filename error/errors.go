@@ -19,5 +19,33 @@ func (e ApiError) AsEvent(appName string) communication.Event {
 }
 
 func (e ApiError) AsInternalEvent() communication.Event {
-	return e.AsEvent("submarine")
+	return e.AsEvent("vertex")
+}
+
+func InternalError() ApiError {
+	return ApiError{
+		ErrorCode: 0,
+		Data:      "Internal error occurred",
+	}
+}
+
+func InvalidToken() ApiError {
+	return ApiError{
+		ErrorCode: 1,
+		Data:      "Invalid or expired token",
+	}
+}
+
+func BadRequest() ApiError {
+	return ApiError{
+		ErrorCode: 2,
+		Data:      "Parse of JSON body failed",
+	}
+}
+
+func SendingMQError() ApiError {
+	return ApiError{
+		ErrorCode: 3,
+		Data:      "Failed to send message to RabbitMQ",
+	}
 }
