@@ -33,16 +33,13 @@ git clone https://github.com/parabolahq/vertex
 
 ### Errors
 
-|       Int Error Code       | Description                             | Fix recommendations                                   |
-|:--------------------------:|-----------------------------------------|-------------------------------------------------------|
-|            `0`             | Internal error occurred                 | _Contact Backend                                      |
-|            Dev_            |                                         |                                                       |
-|            `1`             | Token invalid or not presented          | _Check if token is sent in `Authorization` header and |
-| obtained with correct way_ |                                         |                                                       |
-|            `2`             | Parse of json failed                    | _Check if websocket request is encoded to JSON        |
-|         correctly_         |                                         |                                                       |
-|            `3`             | Error occurred in sending message to MQ | _Check if Queue is correctly                          |
-|        configured_         |                                         |                                                       |
+|      Int Error Code      | Description                              | Fix recommendations                                                              |
+|:------------------------:|------------------------------------------|----------------------------------------------------------------------------------|
+|           `0`            | Internal error occurred                  | _Contact Backend Dev_                                                            |
+|           `1`            | Token invalid or not presented           | _Check if token is sent in `Authorization` header and obtained with correct way_ |
+|           `2`            | Parse of json failed                     | _Check if websocket request is encoded to JSON correctly and_                    |
+|           `3`            | Error occurred in sending message to MQ  | _Check if Message Queue is correctly configured                                  |
+
 
 ## Deployment
 
