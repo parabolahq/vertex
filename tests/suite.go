@@ -2,6 +2,7 @@ package tests
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/lestrrat-go/jwx/jwa"
@@ -10,6 +11,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"gopkg.in/olahol/melody.v1"
 	"os"
+	"vertex/communication"
 	"vertex/config"
 	"vertex/routing"
 )
@@ -19,7 +21,6 @@ type VertexTestSuite struct {
 	Gin         *gin.Engine
 	Melody      *melody.Melody
 	Dialer      *websocket.Dialer
-	PrivateKey  *jwk.Key
 	SignedToken string
 }
 
@@ -31,24 +32,35 @@ func (s *VertexKeysTestSuite) SetupTest() {
 	config.LoadConfigs()
 }
 
-func (s *VertexTestSuite) SetupTest() {
-	s.Gin, s.Melody = routing.SetupRoutes()
-	config.LoadConfigs()
-	config.LoadKeys()
+func CreateEmptyToken() (string, error) {
+	var privateKey *jwk.Key
 	if os.Getenv("TEST_JWK_PRIVATE") != "" {
-		s.PrivateKey, _ = config.LoadKey(os.Getenv("TEST_JWK_PRIVATE"))
+		privateKey, _ = config.LoadKey(os.Getenv("TEST_JWK_PRIVATE"))
 	} else {
-		s.T().Skip("Private key is not specified, please, set it up via TEST_JWK_PRIVATE env")
+		return "", errors.New("private key is not specified, please, set it up via TEST_JWK_PRIVATE env")
 	}
 	userId := "0000-0000-0000-0001"
 	payload, _ := json.Marshal(map[string]interface{}{
 		"uid": userId,
 	})
-	tokenBytes, err := jws.Sign(payload, jwa.RS256, *s.PrivateKey)
+	tokenBytes, err := jws.Sign(payload, jwa.RS256, *privateKey)
 	if err != nil {
-		s.T().Fail()
+		return "", err
 	} else {
-		s.SignedToken = string(tokenBytes)
+		return string(tokenBytes), nil
+	}
+}
+
+func (s *VertexTestSuite) SetupTest() {
+	s.Gin, s.Melody = routing.SetupRoutes()
+	config.LoadConfigs()
+	config.LoadKeys()
+	communication.ConnectToQueue()
+	emptyToken, err := CreateEmptyToken()
+	if err != nil {
+		s.T().Fatal(err)
+	} else {
+		s.SignedToken = emptyToken
 		s.Dialer = websocket.DefaultDialer
 	}
 
