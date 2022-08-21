@@ -125,6 +125,7 @@ func HandleDisconnection(s *melody.Session) {
 func HandleAmqpMessage(m *melody.Melody, d amqp.Delivery) {
 	receivedEvent := new(communication.Event)
 	err := json.Unmarshal(d.Body, &receivedEvent)
+	log.Printf("Recieved message from %s\n", receivedEvent.ServiceAlias)
 	if err != nil {
 		log.Println("Failed to decode message:", err)
 	} else {
@@ -141,6 +142,7 @@ func HandleAmqpMessage(m *melody.Melody, d amqp.Delivery) {
 			if err != nil {
 				log.Println("Failed to broadcast message:", err)
 			}
+			log.Printf("Message broadcasted to %d recepients", len(broadcastSessions))
 		}
 	}
 }
