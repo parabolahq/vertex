@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"time"
 	"vertex/communication"
 	"vertex/config"
 )
@@ -88,10 +89,10 @@ func (s *VertexTestSuite) TestWebsocketAMQPMessageReceive() {
 			"Authorization": {"Bearer " + s.SignedToken},
 		},
 	)
+	time.Sleep(time.Microsecond * 100)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer conn.Close()
 	MessageBody, _ := json.Marshal(communication.Event{
 		ServiceAlias: "testService",
 		EventType:    "testEventType",
@@ -121,4 +122,5 @@ func (s *VertexTestSuite) TestWebsocketAMQPMessageReceive() {
 		RecipientIds: nil,
 		Data:         &map[string]interface{}{},
 	}, event)
+	conn.Close()
 }
