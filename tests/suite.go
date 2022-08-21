@@ -8,8 +8,10 @@ import (
 	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jws"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/stretchr/testify/suite"
 	"gopkg.in/olahol/melody.v1"
+	"log"
 	"os"
 	"vertex/communication"
 	"vertex/config"
@@ -18,10 +20,11 @@ import (
 
 type VertexTestSuite struct {
 	suite.Suite
-	Gin         *gin.Engine
-	Melody      *melody.Melody
-	Dialer      *websocket.Dialer
-	SignedToken string
+	Gin            *gin.Engine
+	Melody         *melody.Melody
+	Dialer         *websocket.Dialer
+	SignedToken    string
+	AMQPConnection *amqp.Connection
 }
 
 type VertexKeysTestSuite struct {
@@ -63,5 +66,14 @@ func (s *VertexTestSuite) SetupTest() {
 		s.SignedToken = emptyToken
 		s.Dialer = websocket.DefaultDialer
 	}
+	// Connect to AMQP
+	var connError error
+	s.AMQPConnection, connError = amqp.Dial(config.Config.String("amqp.url"))
+	if connError != nil {
+		log.Fatal(connError)
+	}
+}
 
+func (s *VertexTestSuite) TearDownTest() {
+	s.AMQPConnection.Close()
 }
