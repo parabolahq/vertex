@@ -31,12 +31,26 @@ func setupWebSocketRoute(g *gin.Engine, m *melody.Melody) *gin.Engine {
 	return g
 }
 
-func AuthorizeRequest(req *http.Request) (data map[string]interface{}, err error) {
-	authorizationHeader := strings.TrimSpace(req.Header.Get("Authorization"))
-	if authorizationHeader == "" || !strings.HasPrefix(authorizationHeader, "Bearer") {
-		return nil, errors.New("token unspecified")
+func TokenFromRequest(req *http.Request) (string, error) {
+	var tokenRaw string
+	if req.URL.Query().Get("token") != "" {
+		tokenRaw = req.URL.Query().Get("token")
+	} else {
+		authorizationHeader := strings.TrimSpace(req.Header.Get("Authorization"))
+		if authorizationHeader == "" || !strings.HasPrefix(authorizationHeader, "Bearer") {
+			return "", errors.New("token unspecified")
+		}
+		tokenRaw = strings.TrimSpace(strings.TrimPrefix(authorizationHeader, "Bearer"))
 	}
-	tokenRaw := strings.TrimSpace(strings.TrimPrefix(authorizationHeader, "Bearer"))
+	return tokenRaw, nil
+}
+
+func AuthorizeRequest(req *http.Request) (data map[string]interface{}, err error) {
+	var tokenRaw string
+	tokenRaw, err = TokenFromRequest(req)
+	if err != nil {
+		return nil, err
+	}
 	token, err := jwt.Parse(
 		[]byte(tokenRaw),
 		jwt.WithKeySet(config.KeySet),
