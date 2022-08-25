@@ -19,7 +19,8 @@ func LoadConfigs() {
 	Config.Load(confmap.Provider(map[string]interface{}{
 		"bindaddr": "localhost:7000",
 		"amqp": map[string]interface{}{
-			"url": "amqp://guest:guest@localhost:5672/",
+			"url":   "amqp://guest:guest@localhost:5672/",
+			"queue": "vertex",
 		},
 		"config": "config.yaml",
 		"keys": []string{
