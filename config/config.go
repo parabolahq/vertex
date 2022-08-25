@@ -33,9 +33,9 @@ func LoadConfigs() {
 	}, "."), nil)
 
 	// Loading values from Env variables
-	Config.Load(env.Provider("SUBMARINE", "_", func(s string) string {
+	Config.Load(env.Provider("VERTEX", "_", func(s string) string {
 		return strings.Replace(strings.ToLower(
-			strings.TrimPrefix(s, "SUBMARINE_")), "_", ".", -1)
+			strings.TrimPrefix(s, "VERTEX_")), "_", ".", -1)
 	}), nil)
 
 	// Loading values from yaml configuration
