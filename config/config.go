@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
@@ -34,9 +35,14 @@ func LoadConfigs() {
 	}, "."), nil)
 
 	// Loading values from Env variables
-	Config.Load(env.Provider("VERTEX", "_", func(s string) string {
-		return strings.Replace(strings.ToLower(
-			strings.TrimPrefix(s, "VERTEX_")), "_", ".", -1)
+	Config.Load(env.ProviderWithValue("VERTEX", "_", func(s string, v string) (string, interface{}) {
+		key := strings.Replace(strings.ToLower(strings.TrimPrefix(s, "VERTEX_")), "_", ".", -1)
+		if strings.HasPrefix(v, "[") {
+			var stringSlice []string
+			json.Unmarshal([]byte(v), &stringSlice)
+			return key, stringSlice
+		}
+		return key, v
 	}), nil)
 
 	// Loading values from yaml configuration
