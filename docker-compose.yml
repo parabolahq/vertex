@@ -1,0 +1,28 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:alpine
+    restart: unless-stopped
+    networks:
+      - vertex
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 2s
+      timeout: 15s
+      retries: 1
+  vertex:
+    image: registry.parabola.study/vertex:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:7000:7000"
+    volumes:
+      - ./config.yaml:/app/config.yaml
+    environment:
+      - VERTEX_AMQP_URL=amqp://guest:guest@rabbitmq:5672/
+    networks:
+      - vertex
+    depends_on:
+      - rabbitmq
+networks:
+  vertex:
+    driver: bridge

@@ -1,0 +1,9 @@
+private.jwk
+public.jwk
+tests/
+vertex_test.go
+config.yaml
+README.md
+*.exe
+.gitignore
+.git
