@@ -16,7 +16,7 @@ jobs:
       - name: Sync dependencies
         run: go mod download && go mod verify
       - name: Build keygen
-        run: go build
+        run: go build -o ./keygen
       - name: Run keygen
         run: ./keygen --alg=RS256 --kid=test --format --bits=4096 --use=sig
       - name: Upload private key as a build artifact
