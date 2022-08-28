@@ -32,6 +32,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: generate-keys
+    env:
+      VERTEX_AMQP_URL: amqp://guest:guest@localhost:49154/
+      TEST_PRIVATE_JWK: ./private.jwk
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -43,10 +46,22 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+      - name: Setup RabbitMQ
+        uses: nijel/rabbitmq-action@v1.0.0        
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
           go-version: 1.18
+      - name: Download public key from artifact
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: public-key
+          path: ./public.jwk
+      - name: Download public key from artifact
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: private-key
+          path: ./private.jwk
       - name: Run tests
         run: go test 
   build:
@@ -63,8 +78,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ghcr.io/ivanprogramming/gin-catquotes
-            cr.yandex/${{ secrets.CR_REGISTRY_ID }}/gin-catquotes
+            registry.parabola.study/veretx
           tags: |
             type=sha
             latest
