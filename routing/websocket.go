@@ -74,8 +74,8 @@ func HandleMessage(s *melody.Session, data []byte) {
 		validationErr := apiErr.BadRequest().AsInternalEvent()
 		s.Write(validationErr.AsBytes())
 	} else {
-		if userRequest.ServiceAlias == "vertex" {
-			switch userRequest.MethodName {
+		if userRequest.Service == "vertex" {
+			switch userRequest.Method {
 			case "disconnect":
 				{
 					closeErr := s.Close()
@@ -90,9 +90,9 @@ func HandleMessage(s *melody.Session, data []byte) {
 			case "userInfo":
 				{
 					asJson, _ := json.Marshal(communication.Event{
-						ServiceAlias: "vertex",
-						EventType:    "infoUpdate",
-						Data:         &map[string]interface{}{"userId": s.Keys["user_id"]},
+						Service: "vertex",
+						Event:   "infoUpdate",
+						Data:    &map[string]interface{}{"userId": s.Keys["user_id"]},
 					})
 					s.Write(asJson)
 				}
@@ -139,7 +139,7 @@ func HandleDisconnection(s *melody.Session) {
 func HandleAmqpMessage(m *melody.Melody, d amqp.Delivery) {
 	receivedEvent := new(communication.Event)
 	err := json.Unmarshal(d.Body, &receivedEvent)
-	log.Printf("Recieved message from %s\n", receivedEvent.ServiceAlias)
+	log.Printf("Recieved message from %s\n", receivedEvent.Service)
 	if err != nil {
 		log.Println("Failed to decode message:", err)
 	} else {

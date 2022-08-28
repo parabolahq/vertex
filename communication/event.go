@@ -6,8 +6,8 @@ import (
 
 // Event is data, that is sent to user by pool
 type Event struct {
-	ServiceAlias string                  `json:"serviceAlias"`
-	EventType    string                  `json:"eventType"`
+	Service      string                  `json:"service"`
+	Event        string                  `json:"event"`
 	RecipientIds []string                `json:"recipientIds,omitempty"`
 	Data         *map[string]interface{} `json:"data"`
 }
@@ -17,9 +17,9 @@ func New(serviceAlias, eventType string, data any) Event {
 	jsonData, _ := json.Marshal(data)
 	json.Unmarshal(jsonData, &asMap)
 	return Event{
-		ServiceAlias: serviceAlias,
-		EventType:    eventType,
-		Data:         asMap,
+		Service: serviceAlias,
+		Event:   eventType,
+		Data:    asMap,
 	}
 }
 

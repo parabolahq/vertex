@@ -25,7 +25,7 @@ func ConnectToQueue() {
 
 func SendMessageToService(request ServiceRequest) error {
 	_, err := Channel.QueueDeclare(
-		request.UserRequest.ServiceAlias,
+		request.UserRequest.Service,
 		false,
 		false,
 		false,
@@ -39,7 +39,7 @@ func SendMessageToService(request ServiceRequest) error {
 	err = Channel.PublishWithContext(
 		context.Background(),
 		"",
-		request.UserRequest.ServiceAlias,
+		request.UserRequest.Service,
 		false,
 		false,
 		amqp.Publishing{

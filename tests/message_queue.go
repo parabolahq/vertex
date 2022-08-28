@@ -55,9 +55,9 @@ func (s *VertexTestSuite) TestWebsocketAMQPCommunication() {
 	}
 	defer conn.Close()
 	req := communication.UserRequest{
-		ServiceAlias: "test-service",
-		MethodName:   "test-method",
-		Params:       gin.H{},
+		Service: "test-service",
+		Method:  "test-method",
+		Data:    gin.H{},
 	}
 	err = conn.WriteJSON(req)
 	if err != nil {
@@ -94,8 +94,8 @@ func (s *VertexTestSuite) TestWebsocketAMQPMessageReceive() {
 		log.Fatal(err)
 	}
 	MessageBody, _ := json.Marshal(communication.Event{
-		ServiceAlias: "testService",
-		EventType:    "testEventType",
+		Service:      "testService",
+		Event:        "testEventType",
 		RecipientIds: []string{"0000-0000-0000-0001"},
 		Data:         &map[string]interface{}{},
 	})
@@ -117,8 +117,8 @@ func (s *VertexTestSuite) TestWebsocketAMQPMessageReceive() {
 		s.Assert().Fail(err.Error())
 	}
 	assert.Equal(s.T(), &communication.Event{
-		ServiceAlias: "testService",
-		EventType:    "testEventType",
+		Service:      "testService",
+		Event:        "testEventType",
 		RecipientIds: nil,
 		Data:         &map[string]interface{}{},
 	}, event)

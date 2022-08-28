@@ -25,9 +25,9 @@ func (s *VertexTestSuite) TestWebsocketDisconnection() {
 	}
 	defer conn.Close()
 	err = conn.WriteJSON(communication.UserRequest{
-		ServiceAlias: "vertex",
-		MethodName:   "disconnect",
-		Params:       gin.H{},
+		Service: "vertex",
+		Method:  "disconnect",
+		Data:    gin.H{},
 	})
 	if err != nil {
 		log.Fatal(err)
