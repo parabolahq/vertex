@@ -65,7 +65,7 @@ jobs:
           path: ./
       - name: Run tests
         run: go test 
-  build:
+  push:
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -79,17 +79,28 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            registry.parabola.study/veretx
+            registry.parabola.study/vertex
           tags: |
             type=sha
             latest
       - name: short-sha
         id: short-sha
         uses: benjlevesque/short-sha@v1.2
-      - name: Build and push Docker image to GHCR and to YCR
+      - name: Build and push Docker image to registry
         uses: docker/build-push-action@v3.0.0
         with:
           push: true
           file: ./Dockerfile
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+  delete-artifacts:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Delete Artifact
+      uses: GeekyEggo/delete-artifact@v1.0.0
+      with:
+        # The name of the artifact to delete; multiple names can be supplied on new lines.
+        name: |
+            private-key
+            public-key
