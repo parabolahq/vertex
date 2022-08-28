@@ -10,7 +10,7 @@ jobs:
       - name: Setting up Go
         uses: actions/setup-go@v3.3.0
       - name: Checkout keygen repository
-        uses: actions/checkout@2.4.2
+        uses: actions/checkout@v2.4.2
         with:
           repository: openstandia/jwk-keygen
       - name: Sync dependencies
