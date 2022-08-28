@@ -1,0 +1,81 @@
+name: Run Package tests, deploy to container registry and recreate container in portainer 
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-keys:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setting up Go
+        uses: actions/setup-go@v3.3.0
+      - name: Checkout keygen repository
+        uses: actions/checkout@2.4.2
+        with:
+          repository: openstandia/jwk-keygen
+      - name: Sync dependencies
+        run: go mod download && go mod verify
+      - name: Build keygen
+        run: go build
+      - name: Run keygen
+        run: ./keygen --alg=RS256 --kid=test --format --bits=4096 --use=sig
+      - name: Upload private key as a build artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: private-key
+          path: ./jwk_sig_RS256_test.json
+      - name: Upload public key as a build artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: public-key
+          path: ./jwk_sig_RS256_test-pub.json
+  test:
+    runs-on: ubuntu-latest
+    needs: generate-keys
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+      - name: Create 
+      - name: Run tests
+        run: go test 
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Docker Caching
+        uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/ivanprogramming/gin-catquotes
+            cr.yandex/${{ secrets.CR_REGISTRY_ID }}/gin-catquotes
+          tags: |
+            type=sha
+            latest
+      - name: short-sha
+        id: short-sha
+        uses: benjlevesque/short-sha@v1.2
+      - name: Build and push Docker image to GHCR and to YCR
+        uses: docker/build-push-action@v3.0.0
+        with:
+          push: true
+          file: ./Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
