@@ -51,7 +51,7 @@ jobs:
         uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: Setup RabbitMQ
-        run: docker -dp "127.0.0.1:5672:5672" rabbitmq:latest
+        run: docker run -dp "127.0.0.1:5672:5672" rabbitmq:latest
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
