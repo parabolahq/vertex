@@ -35,7 +35,7 @@ jobs:
     env:
       VERTEX_AMQP_URL: amqp://guest:guest@localhost:5672/
       VERTEX_KEYS: '["./jwk_sig_RS256_test-pub.json"]'
-      TEST_PRIVATE_JWK: ./jwk_sig_RS256_test.json
+      TEST_JWK_PRIVATE: ./jwk_sig_RS256_test.json
     steps:
       - name: Checkout
         uses: actions/checkout@v2
