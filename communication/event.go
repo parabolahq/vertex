@@ -6,10 +6,10 @@ import (
 
 // Event is data, that is sent to user by pool
 type Event struct {
-	Service      string                  `json:"service"`
-	Event        string                  `json:"event"`
-	RecipientIds []string                `json:"recipientIds,omitempty"`
-	Data         *map[string]interface{} `json:"data"`
+	Service    string                  `json:"service"`
+	Event      string                  `json:"event"`
+	Recipients []string                `json:"recipients,omitempty"`
+	Data       *map[string]interface{} `json:"data"`
 }
 
 func New(serviceAlias, eventType string, data any) Event {

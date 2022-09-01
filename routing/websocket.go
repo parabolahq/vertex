@@ -143,8 +143,8 @@ func HandleAmqpMessage(m *melody.Melody, d amqp.Delivery) {
 	if err != nil {
 		log.Println("Failed to decode message:", err)
 	} else {
-		recipients := receivedEvent.RecipientIds
-		receivedEvent.RecipientIds = nil
+		recipients := receivedEvent.Recipients
+		receivedEvent.Recipients = nil
 		broadcastSessions := []*melody.Session{}
 		for _, recipient := range recipients {
 			sessions := communication.GetSessions(recipient)

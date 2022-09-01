@@ -94,10 +94,10 @@ func (s *VertexTestSuite) TestWebsocketAMQPMessageReceive() {
 		log.Fatal(err)
 	}
 	MessageBody, _ := json.Marshal(communication.Event{
-		Service:      "testService",
-		Event:        "testEventType",
-		RecipientIds: []string{"0000-0000-0000-0001"},
-		Data:         &map[string]interface{}{},
+		Service:    "testService",
+		Event:      "testEventType",
+		Recipients: []string{"0000-0000-0000-0001"},
+		Data:       &map[string]interface{}{},
 	})
 	var event *communication.Event
 	channel.PublishWithContext(
@@ -117,10 +117,10 @@ func (s *VertexTestSuite) TestWebsocketAMQPMessageReceive() {
 		s.Assert().Fail(err.Error())
 	}
 	assert.Equal(s.T(), &communication.Event{
-		Service:      "testService",
-		Event:        "testEventType",
-		RecipientIds: nil,
-		Data:         &map[string]interface{}{},
+		Service:    "testService",
+		Event:      "testEventType",
+		Recipients: nil,
+		Data:       &map[string]interface{}{},
 	}, event)
 	conn.Close()
 }
