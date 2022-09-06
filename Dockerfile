@@ -1,7 +1,9 @@
 FROM golang:latest as builder
 WORKDIR /app
-COPY . .
+# Copying go.mod to reduce docker container build time (by using cache)
+COPY go.mod /app/go.mod
 RUN go mod download && go mod verify
+COPY . .
 RUN go build -o /app/app
 FROM alpine:latest
 WORKDIR /app
